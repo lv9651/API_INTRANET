@@ -8,12 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="MailKit" Version="4.8.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="MySql.Data" Version="9.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Maestros\Controllers\Agenda\" />
+    <Folder Include="Areas\Maestros\Services\Agenda\" />
     <Folder Include="Areas\Produccion\Controllers\" />
     <Folder Include="Areas\Produccion\Data\" />
     <Folder Include="Areas\Produccion\Models\" />

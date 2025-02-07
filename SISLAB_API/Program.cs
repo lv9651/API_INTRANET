@@ -1,4 +1,7 @@
+
+using SISLAB_API.Areas.Maestros.Repositories;
 using SISLAB_API.Areas.Maestros.Services;
+using YourNamespace.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,31 +25,23 @@ builder.Services.AddCors(options =>
 
 // Repositorios
 builder.Services.AddScoped<EmpleadoRepository>();
-builder.Services.AddScoped<LoginRepository>();
-builder.Services.AddScoped<NoticiaRepository>();
-builder.Services.AddScoped<DocumentRepository>();
-builder.Services.AddScoped<InductionRepository>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<AgendaRepository>();
-builder.Services.AddScoped<EmailRepository>();
-builder.Services.AddScoped<NotificationRepository>();
+builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddScoped<MedicoRepository>();
+builder.Services.AddScoped<VentaRepository>();
 
 
 // Servicios
 builder.Services.AddScoped<EmpleadoService>();
-builder.Services.AddScoped<LoginService>();
-builder.Services.AddScoped<NoticiaService>();
-builder.Services.AddScoped<InductionService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<DataTransferService>();
-builder.Services.AddScoped<AgendaService>();
+builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<MedicoService>();
+builder.Services.AddControllers();
+builder.Services.AddHttpClient<IzipayService>();
+builder.Services.AddScoped<VentaService>();
+builder.Services.AddScoped<CorreoService>();
+
+
 // Registrar DocumentoService con la ruta compartida
-builder.Services.AddScoped<DocumentoService>(provider =>
-    new DocumentoService(
-        provider.GetRequiredService<DocumentRepository>(),
-        sharedPath)); // Pasar la ruta compartida
 
 var app = builder.Build();
 

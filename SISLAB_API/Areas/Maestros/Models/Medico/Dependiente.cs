@@ -1,0 +1,17 @@
+﻿namespace SISLAB_API.Areas.Maestros.Models
+{
+    public class Dependiente
+    {
+     
+        public string cli_codigo { get; set; }
+        public string nombres { get; set; }
+        public string apePaterno { get; set; }
+        public string apeMaterno { get; set; }
+
+        public string parentesco { get; set; }
+    }
+}
+
+
+
+
