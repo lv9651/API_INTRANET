@@ -57,7 +57,19 @@ public class InductionRepository
 
 
 
-
+    public async Task<bool> UpdateInductionAsync(InductAct noticia)
+    {
+        var query = @"
+            UPDATE induction_videos 
+            SET title = @Title, content = @Content, module = @module
+            WHERE id = @Id"
+        ;
+        using (var connection = CreateConnection())
+        {
+            var result = await connection.ExecuteAsync(query, noticia);
+            return result > 0; // Retorna true si la actualización fue exitosa
+        }
+    }
 
 
     public async Task<bool> DeleteNewsByIdAsync(int id)

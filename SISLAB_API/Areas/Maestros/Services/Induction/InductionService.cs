@@ -40,6 +40,13 @@ namespace SISLAB_API.Areas.Maestros.Services
             return await _InductionRepository.DeleteNewsByIdAsync(id);
         }
 
+        public async Task<InductAct> ActualizarInduccionAsync(InductAct noticia)
+        {
+            // Llamamos directamente al repositorio para realizar la actualización
+            var updated = await _InductionRepository.UpdateInductionAsync(noticia);
+
+            return updated ? noticia : null; // Si la actualización tuvo éxito, retornamos la noticia
+        }
 
 
 

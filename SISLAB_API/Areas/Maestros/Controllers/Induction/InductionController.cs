@@ -284,7 +284,16 @@ namespace SISLAB_API.Areas.Maestros.Controllers
 
             */
 
+        [HttpPut("act")]
+        public async Task<IActionResult> UpdateInduccion([FromBody] InductAct noticia)
+        {
 
+
+            var updatedNoticia = await _inductionservice.ActualizarInduccionAsync(noticia);
+
+
+            return Ok(new { message = "Inducion actualizada correctamente", data = updatedNoticia });
+        }
 
 
 
