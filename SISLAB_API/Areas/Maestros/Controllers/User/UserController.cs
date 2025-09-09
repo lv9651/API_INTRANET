@@ -34,27 +34,38 @@ namespace SISLAB_API.Areas.Maestros.Controllers
             return Ok(roles);
         }
 
-        // Actualizar usuario
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUserAsync(int id, [FromBody] User user)
+
+        [HttpPost("update-password")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UserPasswordUpdate model)
         {
-            // Asegurarse de que el id del usuario en la URL coincida con el id del cuerpo
-            if (id != user.id)
+            try
             {
-                return BadRequest("El ID de la URL no coincide con el ID del usuario.");
-            }
+                if (string.IsNullOrEmpty(model.Dni) || string.IsNullOrEmpty(model.NewPassword))
+                {
+                    return BadRequest(new { success = false, message = "DNI y nueva contraseña son requeridos" });
+                }
 
-            // Intentar actualizar el usuario
-            var updateResult = await _userService.UpdateUserAsync(user);
+                var result = await _userService.UpdatePassword(model);
 
-            if (updateResult)
-            {
-                return NoContent(); // 204 No Content -> Actualización exitosa
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Contraseña actualizada exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "No se pudo actualizar la contraseña" });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound("El usuario no fue encontrado o no se pudo actualizar.");
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Error interno del servidor",
+                    error = ex.Message
+                });
             }
         }
+       
     }
 }

@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Dapper;
+using MySql.Data.MySqlClient;
 using SISLAB_API.Areas.Maestros.Models;
 using System.Data;
 using System.Threading.Tasks;
@@ -56,6 +57,26 @@ public class UserRepository
         return users;
     }
 
+
+
+    public async Task<int> UpdateUserPassword(string dni, string newPassword)
+    {
+        using (var connection = new MySqlConnection(_connectionString))
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("p_dni", dni);
+            parameters.Add("p_new_password", newPassword);
+
+            // Usar QueryFirstOrDefaultAsync para obtener el resultado del SELECT
+            var result = await connection.QueryFirstOrDefaultAsync<int>(
+                "UpdateUserPassword",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result;
+        }
+    }
     // Método para obtener todos los roles
     public async Task<IEnumerable<Role>> GetAllRolAsync()
     {

@@ -37,13 +37,14 @@ public class UserService
         return email;
     }
 
-    // Método para actualizar un usuario
-    public async Task<bool> UpdateUserAsync(User user)
+
+    public async Task<bool> UpdatePassword(UserPasswordUpdate model)
     {
-        // Llamar al repositorio para actualizar el usuario en la base de datos
-        var result = await _userRepository.UpdateUserAsync(user);
-        return result;
+        var affectedRows = await _userRepository.UpdateUserPassword(model.Dni, model.NewPassword);
+        return affectedRows > 0;
     }
+    // Método para actualizar un usuario
+
 
     // Aquí podrías agregar más métodos según lo necesites (ej. agregar, eliminar usuarios)
 }

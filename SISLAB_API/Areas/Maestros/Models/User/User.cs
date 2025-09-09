@@ -14,4 +14,11 @@
 
 
     }
+
+    public class UserPasswordUpdate
+    {
+        public string Dni { get; set; }
+        public string NewPassword { get; set; }
+    }
+
 }
