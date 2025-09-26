@@ -21,7 +21,7 @@ public class DataTransferService
             {
                 await sqlConnection.OpenAsync();
 
-                var sqlQuery = "SELECT DOCIDEN as dni, DOCIDEN as username , DOCIDEN as password,\r\nCONCAT(NOMBRE,' ',APEPAT,' ',APEMAT)NOMBRE,1 as role_id,EMAIL\r\n from TrabajadorIntranet \r\n where SITUACIÓN=1\r\n union all\r\nSELECT DOCIDEN as dni, DOCIDEN as username , DOCIDEN as password,\r\nCONCAT(NOMBRE,' ',APEPAT,' ',APEMAT)NOMBRE,1 as role_id,EMAIL\r\nfrom PLMEDSOL.DBO.TrabajadorIntranet  where SITUACIÓN=1  union all\r\nSELECT DOCIDEN as dni, DOCIDEN as username , DOCIDEN as password,\r\nCONCAT(NOMBRE,' ',APEPAT,' ',APEMAT)NOMBRE ,1 as role_id,EMAIL from PLQUIMSA.DBO.TrabajadorIntranet \r\n where SITUACIÓN=1";
+                var sqlQuery = "SELECT DOCIDEN as dni, DOCIDEN as username , DOCIDEN as password,\r\nCONCAT(NOMBRE,' ',APEPAT,' ',APEMAT)NOMBRE,1 as role_id,EMAIL\r\n from TrabajadorIntranet \r\n where SITUACIÓN=1\r\n union all\r\nSELECT DOCIDEN as dni, DOCIDEN as username , DOCIDEN as password,\r\nCONCAT(NOMBRE,' ',APEPAT,' ',APEMAT)NOMBRE,1 as role_id,EMAIL\r\nfrom PLMEDSOL.DBO.TrabajadorIntranet  where SITUACIÓN=1  union all\r\nSELECT DOCIDEN as dni, DOCIDEN as username , DOCIDEN as password,\r\nCONCAT(NOMBRE,' ',APEPAT,' ',APEMAT)NOMBRE ,1 as role_id,EMAIL from PLQUIMSA.DBO.TrabajadorIntranet \r\n where SITUACIÓN=1 UNION ALL SELECT DOCIDEN AS dni, DOCIDEN AS username, DOCIDEN AS password,\r\n       CONCAT(NOMBRE, ' ', APEPAT, ' ', APEMAT) AS NOMBRE,\r\n       1 AS role_id,\r\n       EMAIL\r\nFROM PLDIST.DBO.TrabajadorIntranet\r\nWHERE SITUACIÓN = 1;";
 
                 using (var command = new SqlCommand(sqlQuery, sqlConnection))
                 using (var reader = await command.ExecuteReaderAsync())
