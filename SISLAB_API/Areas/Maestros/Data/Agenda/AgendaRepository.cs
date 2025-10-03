@@ -48,7 +48,58 @@ public class AgendaRepository
             }
         }
 
-        public List<AgendaItem> GetAgendaItems(DateTime date)
+    public async Task<int> CrearAsync(CrearSugerenciaRequest sugerencia)
+    {
+        using var conn = new MySqlConnection(_connectionString);
+        var sql = "CALL CrearSugerencia(@EmpleadoDni, @Tipo, @Mensaje);";
+        var parameters = new
+        {
+            EmpleadoDni = sugerencia.EmpleadoDni,
+            Tipo = sugerencia.Tipo,
+            Mensaje = sugerencia.Mensaje
+        };
+        await conn.ExecuteAsync(sql, parameters);
+
+        var id = await conn.ExecuteScalarAsync<int>("SELECT LAST_INSERT_ID();");
+        return id;
+    }
+
+    public async Task<IEnumerable<Sugerencia>> ObtenerPorEmpleadoAsync(string dni)
+    {
+        using var conn = new MySqlConnection(_connectionString);
+        var sql = @"SELECT s.*, e.Nombre AS EmpleadoNombre
+                    FROM sugerencias s
+                    LEFT JOIN users e ON e.dni = s.empleado_dni
+                    WHERE s.empleado_dni = @dni
+                    ORDER BY s.fecha_envio DESC";
+        return await conn.QueryAsync<Sugerencia>(sql, new { dni });
+    }
+    public async Task<IEnumerable<Sugerencia>> ObtenerTodasAsync()
+    {
+        using var conn = new MySqlConnection(_connectionString);
+        var sql = "CALL ObtenerTodasLasSugerencias();";
+        return await conn.QueryAsync<Sugerencia>(sql);
+    }
+
+    public async Task<bool> MarcarComoRevisadaAsync(int id, string revisadoPorDni, string respuestaRh = null)
+    {
+        using var conn = new MySqlConnection(_connectionString);
+
+        if (respuestaRh == null)
+        {
+            var sql = "CALL MarcarSugerenciaComoRevisada(@Id, @RevisadoPorDni);";
+            var result = await conn.ExecuteAsync(sql, new { Id = id, RevisadoPorDni = revisadoPorDni });
+            return result > 0;
+        }
+        else
+        {
+            var sql = "CALL ResponderSugerenciaConComentario(@Id, @RevisadoPorDni, @Respuesta);";
+            var result = await conn.ExecuteAsync(sql, new { Id = id, RevisadoPorDni = revisadoPorDni, Respuesta = respuestaRh });
+            return result > 0;
+        }
+
+    }
+    public List<AgendaItem> GetAgendaItems(DateTime date)
         {
             var items = new List<AgendaItem>();
             using (var connection = new MySqlConnection(_connectionString))

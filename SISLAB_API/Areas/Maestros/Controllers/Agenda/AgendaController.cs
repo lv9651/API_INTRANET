@@ -42,6 +42,44 @@ public class AgendaController : ControllerBase
         return Ok("Agenda item deleted successfully.");
     }
 
+
+        [HttpPost("crearsugerencia")]
+        public async Task<IActionResult> Crear([FromBody] CrearSugerenciaRequest sugerencia)
+        {
+            var id = await _agendaService.CrearSugerenciaAsync(sugerencia);
+            return CreatedAtAction(nameof(ObtenerTodas), new { id }, sugerencia);
+        }
+
+        [HttpGet("obtenersug")]
+        public async Task<IActionResult> ObtenerTodas()
+        {
+            var lista = await _agendaService.ObtenerTodasSugerenciasAsync();
+            return Ok(lista);
+        }
+
+        // Obtener buzón personal (Empleado)
+        [HttpGet("mis-sugerencias/{dni}")]
+        public async Task<IActionResult> ObtenerPorEmpleado(string dni)
+        {
+            var data = await _agendaService.ObtenerPorEmpleadoAsync(dni);
+            return Ok(data);
+        }
+
+        [HttpPut("{id}/revisar")]
+        public async Task<IActionResult> Revisar(int id, [FromBody] RevisarDto dto)
+        {
+            var exito = await _agendaService.RevisarSugerenciaAsync(id, dto.RevisadoPorDni, dto.RespuestaRh);
+            if (!exito) return NotFound();
+            return NoContent();
+        }
+    
+
+    public class RevisarDto
+    {
+        public string RevisadoPorDni { get; set; }
+        public string RespuestaRh { get; set; }  // Opcional
+    }
+
     [HttpGet("date/{date}")]
     public IActionResult GetAgendaItems(DateTime date)
     {

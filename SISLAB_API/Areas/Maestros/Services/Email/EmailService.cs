@@ -8,11 +8,27 @@ public class EmailService
 {
     private readonly EmailRepository _emailRepository;
 
-    public EmailService()
+    public EmailService(EmailRepository emailRepository)
     {
-        _emailRepository = new EmailRepository();
+        _emailRepository =  emailRepository;
     }
 
+    public async Task SendAvisoRespuestaSugerenciaAsync(string dni, string nombre)
+    {
+        // 1. Buscar correo del empleado
+        var correo = await _emailRepository.GetEmailByDniAsync(dni);
+        if (string.IsNullOrEmpty(correo))
+            throw new Exception($"No se encontró correo para el DNI {dni}");
+
+        // 2. Construir mensaje
+        string subject = "Respuesta a tu sugerencia - Intranet QF";
+        string body = $"Hola {nombre},\n\n" +
+                      $"Se respondió tu sugerencia, favor de revisarlo en la Intranet QF.\n\n" +
+                      $"Saludos cordiales,\nRecursos Humanos";
+
+        // 3. Enviar email
+        await _emailRepository.SendEmailSugAsync(correo, subject, body);
+    }
     public async Task SendDocumentEmailAsync(EmailModel emailModel)
     {
         string subject = $" {emailModel.Beneficio}";
