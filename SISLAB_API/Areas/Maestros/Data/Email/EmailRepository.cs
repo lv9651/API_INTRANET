@@ -11,8 +11,8 @@ public class EmailRepository
 {
     private readonly string _smtpServer = "mail.qf.com.pe"; // Cambia según tu proveedor
     private readonly int _smtpPort = 587; // Cambia según tu proveedor
-    private readonly string _fromEmail = "lvelasquez@qf.com.pe"; // Tu correo
-    private readonly string _fromPassword = "Luis@2023$";
+    private readonly string _fromEmail = "Notificacionesqfpharma@qf.com.pe"; // Tu correo
+    private readonly string _fromPassword = "Notificaciones@2025$";
 
 
 
