@@ -107,7 +107,7 @@ namespace SISLAB_API.Areas.Maestros.Services
 
                 try
                 {
-                    if (beneficio == "BOLETA DE PAGO")
+                    if (beneficio == "BOLETA DE PAGO" || beneficio == "CTS" || beneficio == "GRATIFICACION")
                     {
                         // Si el beneficio es "BOLETA DE PAGO", extraemos el DNI y la descripción del nombre del archivo
                         string fileDni = ExtractDniFromFileName(fileName);
