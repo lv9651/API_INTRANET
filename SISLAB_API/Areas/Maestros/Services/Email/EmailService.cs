@@ -33,8 +33,17 @@ public class EmailService
     {
         string subject = $" {emailModel.Beneficio}";
         /*string body = $"Se ha enviado un nuevo documento para el empleado con DNI: {emailModel.Dni}. Descripción: {emailModel.Descripcion}";*/
-        string body = $"Estimado Colaborador:Mediante la presente, le informamos que se acaba de cargar su boleta de pago correspondiente al presente mes al INTRANET QF. Favor de visualizar y firmar la boleta de pago.Saludos Cordiales.";
+        string body = @"
+Estimado Colaborador,
 
+Mediante la presente, le informamos que se acaba de cargar su boleta de pago correspondiente al presente mes al INTRANET QF.
+
+Favor de visualizar y firmar la boleta de pago.
+
+Saludos Cordiales.
+
+Ingresar aquí: https://intranet.qf.com.pe/
+";
 
 
 
