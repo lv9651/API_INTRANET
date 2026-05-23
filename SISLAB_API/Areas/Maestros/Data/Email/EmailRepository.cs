@@ -87,4 +87,185 @@ public class EmailRepository
             }
         }
     }
+    public async Task SendEmailHtmlAsync(string toEmail, string subject, string bodyHtml)
+    {
+        using (var client = new SmtpClient(_smtpServer, _smtpPort))
+        {
+            client.Credentials = new NetworkCredential(_fromEmail, _fromPassword);
+            client.EnableSsl = true;
+
+            using (var mailMessage = new MailMessage())
+            {
+                mailMessage.From = new MailAddress(_fromEmail);
+                mailMessage.Subject = subject;
+                mailMessage.Body = bodyHtml;
+                mailMessage.IsBodyHtml = true;  // HTML activado
+                mailMessage.To.Add(toEmail);
+
+                await client.SendMailAsync(mailMessage);
+            }
+        }
+    }
+
+    // 📧 Enviar correo de confirmación de reserva
+    // 📧 Enviar correo de confirmación de reserva con el formato solicitado
+    public async Task SendReservaConfirmacionAsync(
+    string toEmail,
+    string usuarioNombre,
+    string salaNombre,
+    DateTime fecha,
+    string horaInicio,
+    string horaFin,
+    string areaNombre,
+    string motivo,
+    string usuarioDni)
+    {
+        var subject = $"📅 Reserva de Sala - {salaNombre} - {fecha:dd/MM/yyyy} - {horaInicio} a {horaFin}";
+
+        var bodyHtml = $@"
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }}
+            .content {{ background: #f9f9f9; padding: 20px; border-radius: 0 0 10px 10px; }}
+            .detalle {{ background: white; padding: 15px; border-radius: 8px; margin: 15px 0; }}
+            .detalle-item {{ padding: 8px; border-bottom: 1px solid #eee; }}
+            .detalle-item strong {{ display: inline-block; width: 130px; }}
+            .footer {{ text-align: center; margin-top: 20px; font-size: 12px; color: #888; }}
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>📅 Programación de Sala de Reuniones</h2>
+            </div>
+            <div class='content'>
+                <p>Estimados,</p>
+                
+                <p><strong>La presente es para informar la programación de la sala {salaNombre}</strong></p>
+                
+                <div class='detalle'>
+                    <h3>📋 Detalles de la reserva:</h3>
+                    <div class='detalle-item'><strong>🔹 Reservado por:</strong> {usuarioNombre} (DNI: {usuarioDni})</div>
+                    <div class='detalle-item'><strong>🔹 Sala:</strong> {salaNombre}</div>
+                    <div class='detalle-item'><strong>🔹 Fecha:</strong> {fecha:dddd, dd/MM/yyyy}</div>
+                    <div class='detalle-item'><strong>🔹 Horario:</strong> {horaInicio} - {horaFin}</div>
+                    <div class='detalle-item'><strong>🔹 Área:</strong> {areaNombre}</div>
+                    <div class='detalle-item'><strong>🔹 Motivo:</strong> {motivo}</div>
+                </div>
+                
+                <p>📌 <strong>Recomendaciones:</strong></p>
+                <ul>
+                    <li>Llegar 5 minutos antes</li>
+                    <li>Contar con los materiales necesarios</li>
+                    <li>Al finalizar, dejar la sala en orden</li>
+                </ul>
+            </div>
+            <div class='footer'>
+                <p>Este es un correo automático, por favor no responder.</p>
+                <p><strong>Sistema de Reservas - Intranet</strong></p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+        // Enviar con el usuario en copia (CC) y sin destinatario principal
+        await SendEmailWithCcOnlyAsync(toEmail, "lvelasquez@qf.com.pe", subject, bodyHtml);
+    }
+
+    // 📧 Enviar email con formato HTML y copia (CC)
+    public async Task SendEmailWithCcOnlyAsync(string ccEmail, string toEmail, string subject, string bodyHtml)
+    {
+        using (var client = new SmtpClient(_smtpServer, _smtpPort))
+        {
+            client.Credentials = new NetworkCredential(_fromEmail, _fromPassword);
+            client.EnableSsl = true;
+
+            using (var mailMessage = new MailMessage())
+            {
+                mailMessage.From = new MailAddress(_fromEmail);
+                mailMessage.Subject = subject;
+                mailMessage.Body = bodyHtml;
+                mailMessage.IsBodyHtml = true;
+
+                // No hay destinatario principal (To)
+                // Solo se envía a los CC
+
+                // Agregar copia (CC) al usuario que reservó
+                if (!string.IsNullOrEmpty(ccEmail))
+                {
+                    mailMessage.CC.Add(ccEmail);
+                }
+
+                // Agregar copia (CC) al administrador
+                if (!string.IsNullOrEmpty(toEmail))
+                {
+                    mailMessage.CC.Add(toEmail);
+                }
+
+                await client.SendMailAsync(mailMessage);
+            }
+        }
+    }
+    // 📧 Enviar correo de cancelación de reserva
+    public async Task SendReservaCancelacionAsync(
+     string toEmail,
+     string usuarioNombre,
+     string salaNombre,
+     DateTime fecha,
+     string horaInicio,
+     string horaFin,
+     string usuarioDni)
+    {
+        var subject = $"❌ Cancelación de Reserva - {salaNombre} - {fecha:dd/MM/yyyy} - {horaInicio} a {horaFin}";
+
+        var bodyHtml = $@"
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }}
+            .content {{ background: #f9f9f9; padding: 20px; border-radius: 0 0 10px 10px; }}
+            .detalle {{ background: white; padding: 15px; border-radius: 8px; margin: 15px 0; }}
+            .detalle-item {{ padding: 8px; border-bottom: 1px solid #eee; }}
+            .detalle-item strong {{ display: inline-block; width: 130px; }}
+            .footer {{ text-align: center; margin-top: 20px; font-size: 12px; color: #888; }}
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>❌ Cancelación de Sala de Reuniones</h2>
+            </div>
+            <div class='content'>
+                <p>Estimados,</p>
+                
+                <p><strong>La presente es para informar la cancelación de la reserva de la sala {salaNombre}</strong></p>
+                
+                <div class='detalle'>
+                    <h3>📋 Detalles de la reserva cancelada:</h3>
+                    <div class='detalle-item'><strong>🔹 Reservado por:</strong> {usuarioNombre} (DNI: {usuarioDni})</div>
+                    <div class='detalle-item'><strong>🔹 Sala:</strong> {salaNombre}</div>
+                    <div class='detalle-item'><strong>🔹 Fecha:</strong> {fecha:dddd, dd/MM/yyyy}</div>
+                    <div class='detalle-item'><strong>🔹 Horario:</strong> {horaInicio} - {horaFin}</div>
+                </div>
+                
+                <p>✅ El horario queda disponible para nuevas reservas.</p>
+                
+                <p>📌 <strong>Nota:</strong> Esta cancelación ha sido registrada en el sistema.</p>
+            </div>
+            <div class='footer'>
+                <p>Este es un correo automático, por favor no responder.</p>
+                <p><strong>Sistema de Reservas - Intranet</strong></p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+        // Enviar con copia (CC) al usuario y al administrador
+        await SendEmailWithCcOnlyAsync(toEmail, "lvelasquez@qf.com.pe", subject, bodyHtml);
+    }
 }

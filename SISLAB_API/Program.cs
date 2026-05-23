@@ -46,7 +46,7 @@ builder.Services.AddScoped<EmailRepository>();
 builder.Services.AddScoped<NotificationRepository>();
 builder.Services.AddScoped<VideoReportRepository>();
 builder.Services.AddScoped<BloqueAnuncioRepository>();
-
+builder.Services.AddScoped<ReservaRepository>();
 
 // Servicios
 builder.Services.AddScoped<BloqueAnuncioService>();

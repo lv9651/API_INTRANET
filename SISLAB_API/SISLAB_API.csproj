@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Maestros\Services\ReservarSala\" />
     <Folder Include="Areas\Produccion\Controllers\" />
     <Folder Include="Areas\Produccion\Data\" />
     <Folder Include="Areas\Produccion\Models\" />
