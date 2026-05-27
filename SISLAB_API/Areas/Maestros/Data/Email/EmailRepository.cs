@@ -149,7 +149,7 @@ public class EmailRepository
                 <div class='detalle'>
                     <h3>📋 Detalles de la reserva:</h3>
                     <div class='detalle-item'><strong>🔹 Reservado por:</strong> {usuarioNombre} (DNI: {usuarioDni})</div>
-                    <div class='detalle-item'><strong>🔹 Sala:</strong> {salaNombre}</div>
+                    <div class='detalle-item'><strong>🔹 Ubicacion:</strong> {salaNombre}</div>
                     <div class='detalle-item'><strong>🔹 Fecha:</strong> {fecha:dddd, dd/MM/yyyy}</div>
                     <div class='detalle-item'><strong>🔹 Horario:</strong> {horaInicio} - {horaFin}</div>
                     <div class='detalle-item'><strong>🔹 Área:</strong> {areaNombre}</div>
@@ -171,12 +171,50 @@ public class EmailRepository
     </body>
     </html>";
 
+        var listaCC = new List<string>
+    {
+       "pvaldivia@qf.com.pe",
+       "contabilidad@qf.com.pe",
+       "comercial@qf.com.pe",
+       "jennyizarra@qf.com.pe",
+       "srivera@qf.com.pe",
+       "esoto@qf.com.pe",
+       "floayza@qf.com.pe",
+       "robregon@vinali.pe",
+       "msilva@qf.com.pe",
+       "abernilla@qf.com.pe",
+       "fgonzales@orvit.pe",
+       "mnina@qf.com.pe",
+       "aparedes@qf.com.pe",
+       "rbalcazar@qf.com.pe",
+       "mcadenillas@qf.com.pe",
+       "cbravo@qf.com.pe",
+       "mquinones@qf.com.pe",
+       "kvalverde@qf.com.pe",
+       "rruiz@qf.com.pe",
+       "jleon@qf.com.pe",
+        "lvelasquez@qf.com.pe",     // Administrador
+        "desarrollo@qf.com.pe",        // Gerencia
+        "soporte@qf.com.pe"  
+        // Agrega más aquí
+    };
+
+        // Agregar el correo del usuario
+        if (!string.IsNullOrEmpty(toEmail))
+        {
+            listaCC.Add(toEmail);
+        }
+
+        // Eliminar duplicados
+        listaCC = listaCC.Distinct().ToList();
+
+
         // Enviar con el usuario en copia (CC) y sin destinatario principal
-        await SendEmailWithCcOnlyAsync(toEmail, "lvelasquez@qf.com.pe", subject, bodyHtml);
+        await SendEmailWithCcOnlyAsync(listaCC, null, subject, bodyHtml);
     }
 
     // 📧 Enviar email con formato HTML y copia (CC)
-    public async Task SendEmailWithCcOnlyAsync(string ccEmail, string toEmail, string subject, string bodyHtml)
+    public async Task SendEmailWithCcOnlyAsync(List<string> ccEmails, string toEmail, string subject, string bodyHtml)
     {
         using (var client = new SmtpClient(_smtpServer, _smtpPort))
         {
@@ -190,19 +228,22 @@ public class EmailRepository
                 mailMessage.Body = bodyHtml;
                 mailMessage.IsBodyHtml = true;
 
-                // No hay destinatario principal (To)
-                // Solo se envía a los CC
-
-                // Agregar copia (CC) al usuario que reservó
-                if (!string.IsNullOrEmpty(ccEmail))
+                // Agregar todos los CC
+                if (ccEmails != null && ccEmails.Any())
                 {
-                    mailMessage.CC.Add(ccEmail);
+                    foreach (var cc in ccEmails)
+                    {
+                        if (!string.IsNullOrWhiteSpace(cc))
+                        {
+                            mailMessage.CC.Add(cc.Trim());
+                        }
+                    }
                 }
 
-                // Agregar copia (CC) al administrador
+                // Agregar destinatario principal si existe
                 if (!string.IsNullOrEmpty(toEmail))
                 {
-                    mailMessage.CC.Add(toEmail);
+                    mailMessage.To.Add(toEmail);
                 }
 
                 await client.SendMailAsync(mailMessage);
@@ -248,7 +289,7 @@ public class EmailRepository
                 <div class='detalle'>
                     <h3>📋 Detalles de la reserva cancelada:</h3>
                     <div class='detalle-item'><strong>🔹 Reservado por:</strong> {usuarioNombre} (DNI: {usuarioDni})</div>
-                    <div class='detalle-item'><strong>🔹 Sala:</strong> {salaNombre}</div>
+                    <div class='detalle-item'><strong>🔹 Ubicacion:</strong> {salaNombre}</div>
                     <div class='detalle-item'><strong>🔹 Fecha:</strong> {fecha:dddd, dd/MM/yyyy}</div>
                     <div class='detalle-item'><strong>🔹 Horario:</strong> {horaInicio} - {horaFin}</div>
                 </div>
@@ -266,6 +307,45 @@ public class EmailRepository
     </html>";
 
         // Enviar con copia (CC) al usuario y al administrador
-        await SendEmailWithCcOnlyAsync(toEmail, "lvelasquez@qf.com.pe", subject, bodyHtml);
+        var listaCC = new List<string>
+    {
+       "pvaldivia@qf.com.pe",
+       "contabilidad@qf.com.pe",
+       "comercial@qf.com.pe",
+       "jennyizarra@qf.com.pe",
+       "srivera@qf.com.pe",
+       "esoto@qf.com.pe",
+       "floayza@qf.com.pe",
+       "robregon@vinali.pe",
+       "msilva@qf.com.pe",
+       "abernilla@qf.com.pe",
+       "fgonzales@orvit.pe",
+       "mnina@qf.com.pe",
+       "aparedes@qf.com.pe",
+       "rbalcazar@qf.com.pe",
+       "mcadenillas@qf.com.pe",
+       "cbravo@qf.com.pe",
+       "mquinones@qf.com.pe",
+       "kvalverde@qf.com.pe",
+       "rruiz@qf.com.pe",
+       "jleon@qf.com.pe",
+        "lvelasquez@qf.com.pe",     // Administrador
+        "desarrollo@qf.com.pe",        // Gerencia
+        "soporte@qf.com.pe"          // Soporte
+        // Agrega más aquí
+    };
+
+        // Agregar el correo del usuario
+        if (!string.IsNullOrEmpty(toEmail))
+        {
+            listaCC.Add(toEmail);
+        }
+
+        // Eliminar duplicados
+        listaCC = listaCC.Distinct().ToList();
+
+
+        // Enviar con el usuario en copia (CC) y sin destinatario principal
+        await SendEmailWithCcOnlyAsync(listaCC, null, subject, bodyHtml);
     }
 }
